@@ -42,6 +42,7 @@ class EventDistanceMeasurer:
         mhn_test.load_data_matrix(reduced_data)
         mhn_test.set_penalty(mhn.optimizers.cMHNOptimizer.Penalty.L1)
         self._lam_test= mhn_test.lambda_from_cv()
+        #self._lam_test = 1/len(self._data)
         mhn_test.train(self._lam_test)
         self._init_theta = np.pad(mhn_test.result.log_theta, ((0,1),(0,1)))
 
