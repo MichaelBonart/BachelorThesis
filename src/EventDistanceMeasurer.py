@@ -25,6 +25,9 @@ class EventDistanceMeasurer:
         TOTAL_EUCLID="Total euclid distance",True
         OFFDIAG_EUCLID="Offdiags' euclid distance", True
 
+    global DIST
+    DIST=DistMeasure
+
     def __init__(self, test_events, events):
         self._test_events = test_events
         self._events = events
@@ -85,6 +88,8 @@ class EventDistanceMeasurer:
         return self._dist_mat
     
 
+    #TODO: save and load dataframe (training data) too??
+
     def saveto(self, dir:str):
         #save all computed data in directory 'dir'
         Path(dir).mkdir(parents=False, exist_ok=True)
@@ -109,13 +114,14 @@ class EventDistanceMeasurerCP(EventDistanceMeasurer):
 
     def train_All_MHNs(self, measure_training_times = False):
         hash= pd.util.hash_pandas_object(self._data, index=True).sum() + len(self._test_events)
-        hashstr=hex(hash)
-        dirname=f"{cp.CHECKPOINT_DIR}/edm_{hashstr}"
+        print(hash.hex())
+        hashstr=hash.hex()
+        dirname=f"edm_{hashstr}"
         print(f"Directory for storage is {dirname}")
 
         if not cp.is_dir_already_computed(dirname):
             super().train_All_MHNs(measure_training_times)
-            self.saveto(dirname)
+            self.saveto(f"{cp.CHECKPOINT_DIR}/{dirname}")
         else:
-            self.loadfrom(dirname)
+            self.loadfrom(f"{cp.CHECKPOINT_DIR}/{dirname}")
     

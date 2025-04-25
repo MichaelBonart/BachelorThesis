@@ -129,8 +129,8 @@ class ClusterableMhnGenerator:
     def getMHN(self)->mhn.model.cMHN:
         return self._mhn[self._cStep]
     
-    def getEvents(self)->List[str]:
-        return self.events[self._cStep][DOM.TOTAL]
+    def getEvents(self, domain:CMG_Domain = DOM.TOTAL)->List[str]:
+        return self.events[self._cStep][domain]
 
     def __str__(self):
         return f"{self.events[self._cStep][DOM.TEST]} | {self.events[self._cStep][DOM.CLUSTER]}\n{self._mhn[self._cStep]}"

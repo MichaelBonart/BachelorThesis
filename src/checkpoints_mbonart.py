@@ -23,6 +23,7 @@ def is_already_computed(filename:str)->bool:
 def is_dir_already_computed(dirname:str)->bool:
     if FORCE_EXECUTE_COMPUTATIONS: return False
 
+    print(f"check if {CHECKPOINT_DIR+dirname}   does exist")
     return os.path.isdir(CHECKPOINT_DIR+dirname)
 
 
