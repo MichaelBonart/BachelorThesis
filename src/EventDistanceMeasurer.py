@@ -112,11 +112,11 @@ class EventDistanceMeasurer:
 #child class of EventDistanceMeasurer that implements automatic saving/loading of computation heavy results in the 'checkpoints' directory
 class EventDistanceMeasurerCP(EventDistanceMeasurer):
 
-    def train_All_MHNs(self, measure_training_times = False):
+    def train_All_MHNs(self, measure_training_times = False, identifier=""):
         hash= pd.util.hash_pandas_object(self._data, index=True).sum() + len(self._test_events)
         print(hash.hex())
-        hashstr=hash.hex()
-        dirname=f"edm_{hashstr}"
+        hashstr=hash.hex()[4:-4]
+        dirname=f"edm_{identifier}{hashstr}"
         print(f"Directory for storage is {dirname}")
 
         if not cp.is_dir_already_computed(dirname):
