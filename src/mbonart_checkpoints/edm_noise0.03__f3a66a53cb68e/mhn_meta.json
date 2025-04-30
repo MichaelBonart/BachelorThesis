@@ -1,0 +1,10 @@
+{
+    "lambda": 0.0001000001000000001,
+    "init": "[[-1.8  -0.55  0.    0.  ]\n [-0.48 -3.    0.    0.  ]\n [ 0.14  0.47 -3.13  0.  ]\n [ 0.    0.    0.    0.  ]]",
+    "maxit": 5000,
+    "reltol": 1e-07,
+    "score": 0.9988565275606058,
+    "message": "CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH",
+    "status": 0,
+    "nit": 46
+}
