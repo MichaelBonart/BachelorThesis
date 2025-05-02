@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import cmhn_distances
 import checkpoints_mbonart as cp
+import mhn_tools as mytools
 from pathlib import Path
 
 
@@ -44,7 +45,9 @@ class EventDistanceMeasurer:
         reduced_data=self._data[self._test_events]
         mhn_test.load_data_matrix(reduced_data)
         mhn_test.set_penalty(mhn.optimizers.cMHNOptimizer.Penalty.L1)
-        self._lam_test= mhn_test.lambda_from_cv()
+        self._lam_test, scores= mhn_test.lambda_from_cv(lambda_vector=mytools.getLambdaSearchRange(reduced_data, steps=19), return_lambda_scores=True)
+        print(self._lam_test)
+        print(scores)
         #self._lam_test = 1/len(self._data)
         mhn_test.train(self._lam_test)
         self._init_theta = np.pad(mhn_test.result.log_theta, ((0,1),(0,1)))
@@ -90,18 +93,22 @@ class EventDistanceMeasurer:
 
     #TODO: save and load dataframe (training data) too??
 
+    #filter out characters that won't work in filenames
+    def event_id(self, ev:str):
+        return "".join(filter(lambda char: char not in "/() ?!", str(ev)))
+
     def saveto(self, dir:str):
         #save all computed data in directory 'dir'
         Path(dir).mkdir(parents=False, exist_ok=True)
         for ev in self._events:
-            self._mhns[ev].save(filename=f"{dir}/mhn_{ev}")
+            self._mhns[ev].save(filename=f"{dir}/mhn_{self.event_id(ev)}")
 
 
 
     def loadfrom(self, dir:str):
         #load all data stored in directory 'dir'
         for ev in self._events:
-            self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{ev}", events=self._test_events + [ev])
+            self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{self.event_id(ev)}", events=self._test_events + [ev])
 
 
 
