@@ -126,6 +126,18 @@ class ClusterableMhnGenerator:
 
         self._mhn[self._cStep].log_theta +=noise
 
+
+    def multNoiseOffDiags(self, amplitude, domain= DOM.TOTAL, col_domain=None):
+        if col_domain is None:
+            col_domain=domain
+
+        n=self.event_count[self._cStep][DOM.TOTAL]
+        mask2d = np.outer(self.getDomainMask(domain), self.getDomainMask(col_domain))   #shape of nxn
+        np.fill_diagonal(mask2d, 0)
+        noise = np.random.normal(1, amplitude, size=(n,n))* mask2d
+
+        self._mhn[self._cStep].log_theta *=noise
+
     def getMHN(self)->mhn.model.cMHN:
         return self._mhn[self._cStep]
     
