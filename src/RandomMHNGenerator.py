@@ -40,7 +40,7 @@ class RandomMHNGenerator:
         
 
     def randomizeBaseRates(self):
-        np.fill_diagonal(self._mhn[self._cStep].log_theta,np.random.pareto(3,self._n)-3.2)
+        np.fill_diagonal(self._mhn[self._cStep].log_theta,np.random.pareto(3,self._n)-2.2)
         return self
     
     def addNoise(self, amplitude:float):

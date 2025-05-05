@@ -133,7 +133,7 @@ class ClusterableMhnGenerator:
 
         n=self.event_count[self._cStep][DOM.TOTAL]
         mask2d = np.outer(self.getDomainMask(domain), self.getDomainMask(col_domain))   #shape of nxn
-        np.fill_diagonal(mask2d, 0)
+        np.fill_diagonal(mask2d, 1)
         noise = np.random.normal(1, amplitude, size=(n,n))* mask2d
 
         self._mhn[self._cStep].log_theta *=noise
