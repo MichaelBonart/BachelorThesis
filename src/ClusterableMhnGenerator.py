@@ -66,7 +66,7 @@ class ClusterableMhnGenerator:
         return self
     
     def randomizeBaseRates(self):
-        np.fill_diagonal(self._mhn[self._cStep].log_theta,np.random.pareto(3,self.event_count[self._cStep][DOM.TOTAL])-3.2)
+        np.fill_diagonal(self._mhn[self._cStep].log_theta,np.random.pareto(3,self.event_count[self._cStep][DOM.TOTAL])-2.2)
         return self
 
     
@@ -135,7 +135,7 @@ class ClusterableMhnGenerator:
         mask2d = np.outer(self.getDomainMask(domain), self.getDomainMask(col_domain))   #shape of nxn
         np.fill_diagonal(mask2d, 1)
         noise = np.random.normal(1, amplitude, size=(n,n))* mask2d
-
+        np.fill_diagonal(noise, 1)
         self._mhn[self._cStep].log_theta *=noise
 
     def getMHN(self)->mhn.model.cMHN:
