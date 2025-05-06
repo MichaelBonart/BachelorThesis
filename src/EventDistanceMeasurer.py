@@ -39,13 +39,13 @@ class EventDistanceMeasurer:
     def load_data(self, data:pd.DataFrame):
         self._data=data
 
-    def train_All_MHNs(self, measure_training_times:bool = False):
+    def train_All_MHNs(self, measure_training_times:bool = False, pick_1se=True):
         #TODO: compute init_theta and lambda universally on test_events only?
         mhn_test=mhn.optimizers.cMHNOptimizer()
         reduced_data=self._data[self._test_events]
         mhn_test.load_data_matrix(reduced_data)
         mhn_test.set_penalty(mhn.optimizers.cMHNOptimizer.Penalty.L1)
-        self._lam_test, scores= mhn_test.lambda_from_cv(lambda_vector=mytools.getLambdaSearchRange(reduced_data, steps=19), return_lambda_scores=True)
+        self._lam_test, scores= mhn_test.lambda_from_cv(lambda_vector=mytools.getLambdaSearchRange(reduced_data, steps=19),pick_1se=pick_1se, return_lambda_scores=True)
         print(self._lam_test)
         print(scores)
         #self._lam_test = 1/len(self._data)
@@ -119,7 +119,7 @@ class EventDistanceMeasurer:
 #child class of EventDistanceMeasurer that implements automatic saving/loading of computation heavy results in the 'checkpoints' directory
 class EventDistanceMeasurerCP(EventDistanceMeasurer):
 
-    def train_All_MHNs(self, measure_training_times = False, identifier=""):
+    def train_All_MHNs(self, measure_training_times = False, identifier="", **kwargs):
         hash= pd.util.hash_pandas_object(self._data, index=True).sum() + len(self._test_events)
         print(hash.hex())
         hashstr=hash.hex()[4:-4]
@@ -127,7 +127,7 @@ class EventDistanceMeasurerCP(EventDistanceMeasurer):
         print(f"Directory for storage is {dirname}")
 
         if not cp.is_dir_already_computed(dirname):
-            super().train_All_MHNs(measure_training_times)
+            super().train_All_MHNs(measure_training_times, **kwargs)
             self.saveto(f"{cp.CHECKPOINT_DIR}/{dirname}")
         else:
             self.loadfrom(f"{cp.CHECKPOINT_DIR}/{dirname}")
