@@ -1,0 +1,41 @@
+Meeting 5 am 07.05.2025
+
+
+Themen:
+
+-Regularisierung:
+Für kleine MHNs (n=2,...,6) ergeben sich bei der crossvalidation mit 1 SE regel teilweise lambda werte mind. 1000x größer als 1/len(data) (rand der search range),
+was wenig sinnvoll erscheint.
+Ohne 1 SE rule, liegen die lambdas meist bei 1/len(data) oder etwas darunter.
+
+
+-multiplikativer Noise:
+Der multiplikative Noise (statt additivem) brachte nun groundtruth modelle hervor, deren cluster leichter rekonstruiert werden konnten.
+
+
+-lambda abhängigkeit:
+Der erfolg des clusterns könnte von den gewählten lambdas womöglich mehr abhängen als von dem noise level. Wir wollen nun das Prozedere für feste lambda werte durchtestn um die noise levels
+besser vergleichen zu können.
+
+-baserate abhängigkeit:
+als aus versehen mal die baserates auf 0 gesetzt wurden, ist aufgefallen dass das clustering deutlich besser funktioniert.
+eine erklärung könnte sein, dass die offdiagonals dadurch besser im datensatz dargestellt werden und somit auch besser rekonstruiert werden.
+
+
+-L1 Abstand:
+bisher haben wir immer den L2 abstand zwischen den log theta matrizen betrachtet, L1 wäre auch mal interessant
+
+
+-Zeitplan:
+Anmeldung der Bachelorarbeit geplant am 14.05
+Abgabe geplant am 01.08
+
+
+-Arbeit:
+Introduction
+    -cancer progression models
+    -BioPathways anreißen
+    -vorherige distanzmaße erwähnen?
+Kapitel zu Evaluation on simulated data
+Kapitel zu Application on real data
+    -BioPathways zusammenhang
