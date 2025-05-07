@@ -4,7 +4,7 @@
 
 - Discord invitation link: https://discord.gg/RnxuyfVq
 - MHN meetings:
-	- every 1st and 3rd Monda of the month
+	- every 1st and 3rd Monday of the month
 	- 11am
 	- Link: https://uni-regensburg.zoom-x.de/j/67779285281?pwd=Y2NJRnRUNWEyeHZmRkEvbGxXbEZxUT09
 - Papers:
@@ -22,3 +22,8 @@
 ## Tasks
 
 - ...
+
+## Timeplan
+
+- Anmeldeung 14.05.
+- Abgabe Ziel bis 01.08.
