@@ -39,16 +39,29 @@ class EventDistanceMeasurer:
     def load_data(self, data:pd.DataFrame):
         self._data=data
 
-    def train_All_MHNs(self, measure_training_times:bool = False, pick_1se=True):
+    def print_training_info(self, do_cv=True):
+        mhn_test=mhn.optimizers.cMHNOptimizer()
+        reduced_data=self._data[self._test_events]
+        mhn_test.load_data_matrix(reduced_data)
+        mhn_test.set_penalty(mhn.optimizers.cMHNOptimizer.Penalty.L1)
+        searchrange=mytools.getLambdaSearchRange(reduced_data, steps=19)
+        print(searchrange)
+
+    def train_All_MHNs(self, measure_training_times:bool = False,do_cv=True, pick_1se=True):
         #TODO: compute init_theta and lambda universally on test_events only?
         mhn_test=mhn.optimizers.cMHNOptimizer()
         reduced_data=self._data[self._test_events]
         mhn_test.load_data_matrix(reduced_data)
         mhn_test.set_penalty(mhn.optimizers.cMHNOptimizer.Penalty.L1)
-        self._lam_test, scores= mhn_test.lambda_from_cv(lambda_vector=mytools.getLambdaSearchRange(reduced_data, steps=19),pick_1se=pick_1se, return_lambda_scores=True)
-        print(self._lam_test)
-        print(scores)
-        #self._lam_test = 1/len(self._data)
+        if do_cv:
+            searchrange=mytools.getLambdaSearchRange(reduced_data, steps=19)
+            print(searchrange)
+            self._lam_test, scores= mhn_test.lambda_from_cv(lambda_vector=searchrange,pick_1se=pick_1se, return_lambda_scores=True)
+            print(self._lam_test)
+            print(scores)
+        else:
+            self._lam_test = 1/len(self._data)
+        
         mhn_test.train(self._lam_test)
         self._init_theta = np.pad(mhn_test.result.log_theta, ((0,1),(0,1)))
 
@@ -65,7 +78,7 @@ class EventDistanceMeasurer:
         mhn_opt.set_init_theta(self._init_theta)
         mhn_opt.set_penalty(mhn.optimizers.cMHNOptimizer.Penalty.L1)
         #lam= mhn_opt.lambda_from_cv(nfolds=3,steps=5)
-        lam=self._lam_test#1.0/len(reduced_data)   #maybe even no regularization?
+        lam=self._lam_test
         mhn_opt.train(lam)
         self._mhns[ev]=mhn_opt.result
 
