@@ -25,6 +25,9 @@ class EventDistanceMeasurer:
         
         TOTAL_EUCLID="Total euclid distance",True
         OFFDIAG_EUCLID="Offdiags' euclid distance", True
+        OFFDIAG_L1 = "Offdiags L1 distance", True
+        OFFDIAG_L1_SYM = "Offdiags symmetric L1 distance", True
+
 
     global DIST
     DIST=DistMeasure
@@ -91,6 +94,10 @@ class EventDistanceMeasurer:
                 return cmhn_distances.total_euclid_dist
             case self.DistMeasure.OFFDIAG_EUCLID:
                 return cmhn_distances.euclid_dist_offdiag
+            case self.DistMeasure.OFFDIAG_L1:
+                return cmhn_distances.offdiag_l1
+            case self.DistMeasure.OFFDIAG_L1_SYM:
+                return cmhn_distances.offdiag_l1_sym
         
         print(f"Error: No distance measure function matched {dist_measure}")
         return -1
@@ -123,6 +130,7 @@ class EventDistanceMeasurer:
         #load all data stored in directory 'dir'
         for ev in self._events:
             self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{self.event_id(ev)}.csv", events=self._test_events + [ev])
+            
 
 
 
