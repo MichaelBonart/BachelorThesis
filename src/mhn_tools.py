@@ -1,5 +1,6 @@
 import mhn
 import numpy as np
+import pandas as pd
 
 
 def copyMHN(a:mhn.model.cMHN):
@@ -20,4 +21,9 @@ def getLambdaSearchRange(data, steps:int=9):
                 np.log(lambda_min + 1e-10), np.log(lambda_max + 1e-10), steps))
     
     return lambda_path
+
+
+def eliminateZeroRows(dataset: pd.DataFrame):
+    mask= dataset.sum(axis=1)
+    return dataset[mask>0]
 

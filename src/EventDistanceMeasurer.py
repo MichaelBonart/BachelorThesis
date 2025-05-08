@@ -47,10 +47,13 @@ class EventDistanceMeasurer:
         searchrange=mytools.getLambdaSearchRange(reduced_data, steps=19)
         print(searchrange)
 
-    def train_All_MHNs(self, measure_training_times:bool = False,do_cv=True, pick_1se=True):
+    def train_All_MHNs(self, measure_training_times:bool = False,do_cv=True, pick_1se=True, eliminate_zeroes=False):
         #TODO: compute init_theta and lambda universally on test_events only?
         mhn_test=mhn.optimizers.cMHNOptimizer()
         reduced_data=self._data[self._test_events]
+        if eliminate_zeroes:
+            reduced_data=mytools.eliminateZeroRows(reduced_data)
+
         mhn_test.load_data_matrix(reduced_data)
         mhn_test.set_penalty(mhn.optimizers.cMHNOptimizer.Penalty.L1)
         if do_cv:
@@ -60,7 +63,7 @@ class EventDistanceMeasurer:
             print(self._lam_test)
             print(scores)
         else:
-            self._lam_test = 1/len(self._data)
+            self._lam_test = 1/len(reduced_data)
         
         mhn_test.train(self._lam_test)
         self._init_theta = np.pad(mhn_test.result.log_theta, ((0,1),(0,1)))
@@ -83,20 +86,18 @@ class EventDistanceMeasurer:
         self._mhns[ev]=mhn_opt.result
 
     def getDistMeasureFunc(self, dist_measure:DistMeasure):
-        print(f"get func for {dist_measure}")
         match dist_measure:
             case self.DistMeasure.TOTAL_EUCLID:
                 return cmhn_distances.total_euclid_dist
             case self.DistMeasure.OFFDIAG_EUCLID:
                 return cmhn_distances.euclid_dist_offdiag
         
-        print("Nothing matched")
+        print(f"Error: No distance measure function matched {dist_measure}")
         return -1
 
     def compute_distance_matrix(self, dist_measure:DistMeasure):
         n=len(self._events)
         dist_func=self.getDistMeasureFunc(dist_measure)
-        print(f"Distance function: {dist_func}")
         self._dist_mat=pd.DataFrame(np.asarray(
             [[dist_func(self._mhns[p1], self._mhns[p2])
                 for p2 in self._events] for p1 in self._events]
@@ -114,14 +115,14 @@ class EventDistanceMeasurer:
         #save all computed data in directory 'dir'
         Path(dir).mkdir(parents=False, exist_ok=True)
         for ev in self._events:
-            self._mhns[ev].save(filename=f"{dir}/mhn_{self.event_id(ev)}")
+            self._mhns[ev].save(filename=f"{dir}/mhn_{self.event_id(ev)}.csv")
 
 
 
     def loadfrom(self, dir:str):
         #load all data stored in directory 'dir'
         for ev in self._events:
-            self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{self.event_id(ev)}", events=self._test_events + [ev])
+            self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{self.event_id(ev)}.csv", events=self._test_events + [ev])
 
 
 
