@@ -129,8 +129,11 @@ class EventDistanceMeasurer:
     def loadfrom(self, dir:str):
         #load all data stored in directory 'dir'
         for ev in self._events:
-            self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{self.event_id(ev)}.csv", events=self._test_events + [ev])
+            try:
+                self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{self.event_id(ev)}.csv", events=self._test_events + [ev])
             
+            except FileNotFoundError:   #TEMPORARY: access old files with no '.csv' extension
+                self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{self.event_id(ev)}", events=self._test_events + [ev])
 
 
 
