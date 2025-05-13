@@ -148,7 +148,7 @@ class EventDistanceMeasurerCP(EventDistanceMeasurer):
         hash= pd.util.hash_pandas_object(self._data, index=True).sum() + len(self._test_events)
         print(hash.hex())
         hashstr=hash.hex()[4:-4]
-        dirname=f"edm_{identifier}{hashstr}"
+        dirname=f"edm_{identifier}{f'T{len(self._test_events)}_' if len(self._test_events) != 3 else ''}{hashstr}"
         print(f"Directory for storage is {dirname}")
 
         if not cp.is_dir_already_computed(dirname):
