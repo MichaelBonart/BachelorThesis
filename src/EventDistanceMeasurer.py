@@ -120,7 +120,7 @@ class EventDistanceMeasurer:
 
     def saveto(self, dir:str):
         #save all computed data in directory 'dir'
-        Path(dir).mkdir(parents=False, exist_ok=True)
+        Path(dir).mkdir(parents=True, exist_ok=True)
         for ev in self._events:
             self._mhns[ev].save(filename=f"{dir}/mhn_{self.event_id(ev)}.csv")
 
@@ -139,6 +139,22 @@ class EventDistanceMeasurer:
 
 
 
+def getDistMeasurer(dataset: pd.DataFrame, n_test_events=3, dist:EventDistanceMeasurer.DistMeasure=EventDistanceMeasurer.DistMeasure.OFFDIAG_L1_SYM, test_event_set=None)->EventDistanceMeasurer:
+    events=list(dataset.columns)[1:]
+    if test_event_set is None:
+        test_event_set=events[0:n_test_events]
+
+    cluster_event_set=[e for e in events if e not in test_event_set]
+    dist_measurer = EventDistanceMeasurerCP(test_event_set, cluster_event_set)
+    dist_measurer.load_data(dataset)
+    dist_measurer.train_All_MHNs(do_cv=False)
+    dist_measurer.compute_distance_matrix(dist_measure=dist)
+    return dist_measurer
+
+
+
+
+
 
 
 #child class of EventDistanceMeasurer that implements automatic saving/loading of computation heavy results in the 'checkpoints' directory
@@ -148,8 +164,15 @@ class EventDistanceMeasurerCP(EventDistanceMeasurer):
         hash= pd.util.hash_pandas_object(self._data, index=True).sum() + len(self._test_events)
         print(hash.hex())
         hashstr=hash.hex()[4:-4]
-        dirname=f"edm_{identifier}{f'T{len(self._test_events)}_' if len(self._test_events) != 3 else ''}{hashstr}"
+        #dirname=f"edm_{identifier}{f'T{len(self._test_events)}_' if len(self._test_events) != 3 else ''}{hashstr}"
+        dirname=f"edm_{identifier}{hashstr}"
+
+        if not self._test_events is list(self._data.columns[1:3]):      #test event info only added for non standard test event choice
+            dirname+=f"/{self.event_id('_'.join(self._test_events))}"
         print(f"Directory for storage is {dirname}")
+
+        #print(f"test events: {self._test_events}")
+        #print(f"standard test events: {list(self._data.columns[1:3])}")
 
         if not cp.is_dir_already_computed(dirname):
             super().train_All_MHNs(measure_training_times, **kwargs)
