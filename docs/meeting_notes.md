@@ -23,3 +23,21 @@
 - chapter 3 for evaluation on simulated thetas
 - chapter 4 application to real dataset
     - includes desscription of biological pathways
+
+## 14.05.2025
+
+### Regularization
+
+- fixed a t 1/datasetsize
+
+### Distance measure
+- compared symmetrized version of thetas (sum with transpose) --> worked very well
+- other option: use symsparse instead of l1
+- use other test events? Based on their functionalities? -> Andi's list
+- use multiple test event groups
+- compare stability across different test events
+
+### Application
+- Application to LUAD dataset
+    - KEAP and STK11 clustered together
+    - research functions of all genes
