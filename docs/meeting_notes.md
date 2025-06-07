@@ -41,3 +41,29 @@
 - Application to LUAD dataset
     - KEAP and STK11 clustered together
     - research functions of all genes
+
+## 06.06.2025
+
+### Update
+
+- calculated maximum distance over 4 distance metrics
+- not looked at biological functions of all genes
+- similar according to new dist measure: ARID1A, ARID2 and RB1 Mut, Del
+- Andi wegen Biologischer Bedeutungen und wegen Funktionsrecherche fragen
+- EGFR (M) immer große Distanz
+  - hat vor allem starke Distanzen wenn KEAP und STK11 Tesstevents sind
+
+### Thesis
+
+- adding noise Kapitel 
+  - Vergleich verschiedener Noise Stärken
+  - Supervised Clustering Measure 
+    -> Rainer fragen
+- in depth analyse für 2 
+  - mit Andi absprechen
+  - Biopathways anschauen und entsprechende Events in Matrix suchen
+
+### Orga
+
+- Dauer Berechnung Datensatz: ca. 4 Minuten
+- Ziel: in 5 Wochen fertig 
