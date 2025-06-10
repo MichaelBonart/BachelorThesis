@@ -50,7 +50,7 @@ class EventDistanceMeasurer:
         searchrange=mytools.getLambdaSearchRange(reduced_data, steps=19)
         print(searchrange)
 
-    def train_All_MHNs(self, measure_training_times:bool = False,do_cv=True, pick_1se=True, eliminate_zeroes=False):
+    def train_All_MHNs(self, do_cv=False, pick_1se=True, eliminate_zeroes=False):
         #TODO: compute init_theta and lambda universally on test_events only?
         mhn_test=mhn.optimizers.cMHNOptimizer()
         reduced_data=self._data[self._test_events]
@@ -69,7 +69,7 @@ class EventDistanceMeasurer:
             self._lam_test = 1/len(reduced_data)
         
         mhn_test.train(self._lam_test)
-        self._init_theta = np.pad(mhn_test.result.log_theta, ((0,1),(0,1)))
+        self._init_mhn = mhn.model.cMHN(np.pad(mhn_test.result.log_theta, ((0,1),(0,1))), events=self._test_events +['null'])
 
         #train individual MHNs
         for ev in self._events:
@@ -81,7 +81,7 @@ class EventDistanceMeasurer:
         mhn_opt=mhn.optimizers.cMHNOptimizer()
         reduced_data=self._data[self._test_events + [ev]]
         mhn_opt.load_data_matrix(reduced_data)
-        mhn_opt.set_init_theta(self._init_theta)
+        mhn_opt.set_init_theta(self._init_mhn.log_theta)
         mhn_opt.set_penalty(mhn.optimizers.cMHNOptimizer.Penalty.L1)
         #lam= mhn_opt.lambda_from_cv(nfolds=3,steps=5)
         lam=self._lam_test
@@ -112,6 +112,15 @@ class EventDistanceMeasurer:
         return self._dist_mat
     
 
+    def extend_event_domain(self):
+        for ev in self._test_events:
+            self._mhns[ev]= self._init_mhn
+        self._mhns['null']= self._init_mhn
+
+        self._events.extend(self._test_events)
+        self._events.append('null')
+    
+
     #TODO: save and load dataframe (training data) too??
 
     #filter out characters that won't work in filenames
@@ -123,6 +132,8 @@ class EventDistanceMeasurer:
         Path(dir).mkdir(parents=True, exist_ok=True)
         for ev in self._events:
             self._mhns[ev].save(filename=f"{dir}/mhn_{self.event_id(ev)}.csv")
+
+        self._init_mhn.save(filename=f"{dir}/mhn_empty.csv")
 
 
 
@@ -136,10 +147,15 @@ class EventDistanceMeasurer:
                 self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{self.event_id(ev)}", events=self._test_events + [ev])
 
 
+        try:
+            self._init_mhn = mhn.model.cMHN.load(filename=f"{dir}/mhn_empty.csv", events=self._test_events + ['null'])
+        except FileNotFoundError:
+            print("No init theta available in save files. Event domain extension only available after recomputing")
 
 
 
-def getDistMeasurer(dataset: pd.DataFrame, n_test_events=3, dist:EventDistanceMeasurer.DistMeasure=EventDistanceMeasurer.DistMeasure.OFFDIAG_L1_SYM, test_event_set=None)->EventDistanceMeasurer:
+
+def getDistMeasurer(dataset: pd.DataFrame, n_test_events=3, dist:EventDistanceMeasurer.DistMeasure=EventDistanceMeasurer.DistMeasure.OFFDIAG_L1_SYM, test_event_set=None, extended_event_domain=False)->EventDistanceMeasurer:
     events=list(dataset.columns)[1:]
     if test_event_set is None:
         test_event_set=events[0:n_test_events]
@@ -148,6 +164,8 @@ def getDistMeasurer(dataset: pd.DataFrame, n_test_events=3, dist:EventDistanceMe
     dist_measurer = EventDistanceMeasurerCP(test_event_set, cluster_event_set)
     dist_measurer.load_data(dataset)
     dist_measurer.train_All_MHNs(do_cv=False)
+    if extended_event_domain: 
+        dist_measurer.extend_event_domain()
     dist_measurer.compute_distance_matrix(dist_measure=dist)
     return dist_measurer
 
@@ -167,12 +185,12 @@ class EventDistanceMeasurerCP(EventDistanceMeasurer):
         #dirname=f"edm_{identifier}{f'T{len(self._test_events)}_' if len(self._test_events) != 3 else ''}{hashstr}"
         dirname=f"edm_{identifier}{hashstr}"
 
-        if not self._test_events is list(self._data.columns[1:3]):      #test event info only added for non standard test event choice
-            dirname+=f"/{self.event_id('_'.join(self._test_events))}"
+        #if not set(self._test_events) is set(list(self._data.columns[0:3])):      #test event info only added for non standard test event choice (backwards compatibility)
+        dirname+=f"/{self.event_id('_'.join(self._test_events))}"
         print(f"Directory for storage is {dirname}")
 
         #print(f"test events: {self._test_events}")
-        #print(f"standard test events: {list(self._data.columns[1:3])}")
+        #print(f"standard test events: {list(self._data.columns[0:3])}")
 
         if not cp.is_dir_already_computed(dirname):
             super().train_All_MHNs(measure_training_times, **kwargs)
