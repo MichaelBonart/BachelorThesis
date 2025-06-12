@@ -3,6 +3,7 @@ from typing import Dict, List
 import mhn
 import numpy as np
 import string
+import mhn_tools
 from enum import Enum
 
 
@@ -137,6 +138,23 @@ class ClusterableMhnGenerator:
         noise = np.random.normal(1, amplitude, size=(n,n))* mask2d
         np.fill_diagonal(noise, 1)
         self._mhn[self._cStep].log_theta *=noise
+
+
+    #this function uses multiplicative noise
+    def get_noisy_MHN(self, amplitude, domain= DOM.TOTAL, col_domain=None):
+        if col_domain is None:
+            col_domain=domain
+
+        n=self.event_count[self._cStep][DOM.TOTAL]
+        mask2d = np.outer(self.getDomainMask(domain), self.getDomainMask(col_domain))   #shape of nxn
+        np.fill_diagonal(mask2d, 1)
+        noise = np.random.normal(1, amplitude, size=(n,n))* mask2d
+        np.fill_diagonal(noise, 1)
+
+        mhn_copy= mhn_tools.copyMHN(self.getMHN()) 
+        mhn_copy.log_theta *=noise
+        
+        return mhn_copy
 
     def getMHN(self)->mhn.model.cMHN:
         return self._mhn[self._cStep]

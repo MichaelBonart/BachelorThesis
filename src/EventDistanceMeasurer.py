@@ -155,15 +155,20 @@ class EventDistanceMeasurer:
 
 
 
-def getDistMeasurer(dataset: pd.DataFrame, n_test_events=3, dist:EventDistanceMeasurer.DistMeasure=EventDistanceMeasurer.DistMeasure.OFFDIAG_L1_SYM, test_event_set=None, extended_event_domain=False)->EventDistanceMeasurer:
-    events=list(dataset.columns)[1:]
+def getDistMeasurer(dataset: pd.DataFrame,cut_first_col=True, n_test_events=3, dist:EventDistanceMeasurer.DistMeasure=EventDistanceMeasurer.DistMeasure.OFFDIAG_L1_SYM, test_event_set=None, extended_event_domain=False)->EventDistanceMeasurer:
+    
+    if cut_first_col:
+        events=list(dataset.columns)[1:]
+    else:
+        events=list(dataset.columns)
+        
     if test_event_set is None:
         test_event_set=events[0:n_test_events]
 
     cluster_event_set=[e for e in events if e not in test_event_set]
     dist_measurer = EventDistanceMeasurerCP(test_event_set, cluster_event_set)
     dist_measurer.load_data(dataset)
-    dist_measurer.train_All_MHNs(do_cv=False)
+    dist_measurer.train_All_MHNs()
     if extended_event_domain: 
         dist_measurer.extend_event_domain()
     dist_measurer.compute_distance_matrix(dist_measure=dist)
