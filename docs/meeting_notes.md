@@ -85,3 +85,13 @@
   - mean distanz noch nicht ausprobiert --> normalisieren über die Größe der Theta-Matrizen
 - next MHN meeting presentation of results
 - until next time finish evaluation chapter
+
+## Presentation 16.06.2025
+
+- Noise on data rather than theta matrix (from data preprocessing / data generation)
+- results very good, would not expect clusters of pathways
+- summe statt max
+- Publikation?
+- mit Korrelation vergleichen: 
+  - stark korrelierte betrachten als Sanity Check
+  - stark antikorellierte betrachten und biologisch interpretieren
