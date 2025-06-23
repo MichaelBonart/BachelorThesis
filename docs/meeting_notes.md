@@ -67,3 +67,31 @@
 
 - Dauer Berechnung Datensatz: ca. 4 Minuten
 - Ziel: in 5 Wochen fertig 
+
+## 13.06.2025
+
+- Thesisk
+  - wrote MHN part
+  - evaluation part
+    - Redid new noise: Now not iteratively add multiplicative noise, but add increasing noise
+    - rand score:
+      - mean/max/min score over different cluster numbers
+      - heuristic for custer cut off --> do not need it for the evaluation, bc we know the ground truth
+
+- Application
+  - genie16 analysis.ipynb
+  - chromatin remodelling: ARID1,2 KMTD2
+  - MPAK pathway
+  - mean distanz noch nicht ausprobiert --> normalisieren über die Größe der Theta-Matrizen
+- next MHN meeting presentation of results
+- until next time finish evaluation chapter
+
+## Presentation 16.06.2025
+
+- Noise on data rather than theta matrix (from data preprocessing / data generation)
+- results very good, would not expect clusters of pathways
+- summe statt max
+- Publikation?
+- mit Korrelation vergleichen: 
+  - stark korrelierte betrachten als Sanity Check
+  - stark antikorellierte betrachten und biologisch interpretieren
