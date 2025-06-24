@@ -95,3 +95,23 @@
 - mit Korrelation vergleichen: 
   - stark korrelierte betrachten als Sanity Check
   - stark antikorellierte betrachten und biologisch interpretieren
+
+## 24.06.2025
+
+- mean instead of max
+- normalization
+  - by number of entries/ off-diags: dominated by small test event numbers (big distance for EGFR, but persists after taking only 3er test events)
+  - by number of test events
+  - plot norm of a big number of MHNs of sizes 2-4 and see whether linear or quadratic relationship
+- test events: 2er, 3er, 4er
+- test whether there's a bias from the choice of test event sets -> no
+- correlation sanity check
+  - some clusters are not simply correlated
+  - but events with high correlation appear in same cluster
+- wrote 
+  - simulation chapter
+    - may still do confidence intervals for rand score
+  - missing:
+    - combination of distances from different test sets
+    - application (until next time (?))
+    - application to other dataset (Linda will ask Andi for type and test sets)
