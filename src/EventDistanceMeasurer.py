@@ -106,7 +106,7 @@ class EventDistanceMeasurer:
         n=len(self._events)
         dist_func=self.getDistMeasureFunc(dist_measure)
         self._dist_mat=pd.DataFrame(np.asarray(
-            [[dist_func(self._mhns[p1], self._mhns[p2])
+            [[dist_func(self._mhns[p1], self._mhns[p2])#/(0.1+dist_func(self._mhns[p1], self._init_mhn)+dist_func(self._mhns[p2], self._init_mhn))
                 for p2 in self._events] for p1 in self._events]
             ), index=self._events, columns=self._events)
         return self._dist_mat
@@ -115,10 +115,10 @@ class EventDistanceMeasurer:
     def extend_event_domain(self):
         for ev in self._test_events:
             self._mhns[ev]= self._init_mhn
-        self._mhns['null']= self._init_mhn
+        #self._mhns['null']= self._init_mhn
 
         self._events.extend(self._test_events)
-        self._events.append('null')
+        #self._events.append('null')
     
 
     #TODO: save and load dataframe (training data) too??
@@ -155,7 +155,7 @@ class EventDistanceMeasurer:
 
 
 
-def getDistMeasurer(dataset: pd.DataFrame,cut_first_col=True, n_test_events=3, dist:EventDistanceMeasurer.DistMeasure=EventDistanceMeasurer.DistMeasure.OFFDIAG_L1_SYM, test_event_set=None, extended_event_domain=False)->EventDistanceMeasurer:
+def getDistMeasurer(dataset: pd.DataFrame,cut_first_col=True, n_test_events=3, dist:EventDistanceMeasurer.DistMeasure=EventDistanceMeasurer.DistMeasure.OFFDIAG_L1_SYM, test_event_set=None, extended_event_domain=False, identifier='')->EventDistanceMeasurer:
     
     if cut_first_col:
         events=list(dataset.columns)[1:]
@@ -168,7 +168,7 @@ def getDistMeasurer(dataset: pd.DataFrame,cut_first_col=True, n_test_events=3, d
     cluster_event_set=[e for e in events if e not in test_event_set]
     dist_measurer = EventDistanceMeasurerCP(test_event_set, cluster_event_set)
     dist_measurer.load_data(dataset)
-    dist_measurer.train_All_MHNs()
+    dist_measurer.train_All_MHNs(identifier=identifier)
     if extended_event_domain: 
         dist_measurer.extend_event_domain()
     dist_measurer.compute_distance_matrix(dist_measure=dist)
