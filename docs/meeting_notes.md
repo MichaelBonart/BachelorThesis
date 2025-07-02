@@ -115,3 +115,14 @@
     - combination of distances from different test sets
     - application (until next time (?))
     - application to other dataset (Linda will ask Andi for type and test sets)
+
+# 02.06.2025  
+
+- scaling appears linear with the number of test events
+- writing
+  - formulated combined dist measure
+  - started on the application
+  - showing distance matrix and correlation of events
+  - wrote on clusters
+- second dataset to analyze: COAD
+  - Andi will send dataset and pathways this afternoon
