@@ -122,16 +122,11 @@ class EventDistanceMeasurer:
     
 
     #TODO: save and load dataframe (training data) too??
-
-    #filter out characters that won't work in filenames
-    def event_id(self, ev:str):
-        return "".join(filter(lambda char: char not in "/() ?!", str(ev)))
-
     def saveto(self, dir:str):
         #save all computed data in directory 'dir'
         Path(dir).mkdir(parents=True, exist_ok=True)
         for ev in self._events:
-            self._mhns[ev].save(filename=f"{dir}/mhn_{self.event_id(ev)}.csv")
+            self._mhns[ev].save(filename=f"{dir}/mhn_{mytools.event_id(ev)}.csv")
 
         self._init_mhn.save(filename=f"{dir}/mhn_empty.csv")
 
@@ -141,10 +136,10 @@ class EventDistanceMeasurer:
         #load all data stored in directory 'dir'
         for ev in self._events:
             try:
-                self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{self.event_id(ev)}.csv", events=self._test_events + [ev])
+                self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{mytools.event_id(ev)}.csv", events=self._test_events + [ev])
             
             except FileNotFoundError:   #TEMPORARY: access old files with no '.csv' extension
-                self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{self.event_id(ev)}", events=self._test_events + [ev])
+                self._mhns[ev] = mhn.model.cMHN.load(filename=f"{dir}/mhn_{mytools.event_id(ev)}", events=self._test_events + [ev])
 
 
         try:
@@ -155,12 +150,10 @@ class EventDistanceMeasurer:
 
 
 
-def getDistMeasurer(dataset: pd.DataFrame,cut_first_col=True, n_test_events=3, dist:EventDistanceMeasurer.DistMeasure=EventDistanceMeasurer.DistMeasure.OFFDIAG_L1_SYM, test_event_set=None, extended_event_domain=False, identifier='')->EventDistanceMeasurer:
+def getDistMeasurer(dataset: pd.DataFrame,events=None, n_test_events=3, dist:EventDistanceMeasurer.DistMeasure=EventDistanceMeasurer.DistMeasure.OFFDIAG_L1_SYM, test_event_set=None, extended_event_domain=False, identifier='')->EventDistanceMeasurer:
     
-    if cut_first_col:
+    if events is None:
         events=list(dataset.columns)[1:]
-    else:
-        events=list(dataset.columns)
         
     if test_event_set is None:
         test_event_set=events[0:n_test_events]
@@ -191,7 +184,7 @@ class EventDistanceMeasurerCP(EventDistanceMeasurer):
         dirname=f"edm_{identifier}{hashstr}"
 
         #if not set(self._test_events) is set(list(self._data.columns[0:3])):      #test event info only added for non standard test event choice (backwards compatibility)
-        dirname+=f"/{self.event_id('_'.join(self._test_events))}"
+        dirname+=f"/{mytools.event_id('_'.join(self._test_events))}"
         print(f"Directory for storage is {dirname}")
 
         #print(f"test events: {self._test_events}")
