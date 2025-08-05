@@ -93,8 +93,6 @@ class EventDistanceMeasurer:
         if self._null_mhn is None:
             raise ValueError("Error: compute_distance_matrix requires call of 'train_All_MHNs' beforehand.")
 
-
-        n=len(self._events)
         dist_func=self.getDistMeasureFunc(dist_measure)
         self._dist_mat=pd.DataFrame(np.asarray(
             [[dist_func(self._mhns[p1], self._mhns[p2])
@@ -103,6 +101,8 @@ class EventDistanceMeasurer:
         return self._dist_mat
     
 
+    #make dist measurer's domain include the test events
+    #allows for easier combination of the distance matrices for dist measurers with different test event sets
     def extend_event_domain(self):
         for ev in self._test_events:
             self._mhns[ev]= self._null_mhn
@@ -141,7 +141,7 @@ class EventDistanceMeasurer:
 def getDistMeasurer(dataset: pd.DataFrame,events=None, n_test_events=3, dist:EventDistanceMeasurer.DistMeasure=EventDistanceMeasurer.DistMeasure.OFFDIAG_L1_SYM, test_event_set=None, extended_event_domain=False, identifier='')->EventDistanceMeasurer:
     
     if events is None:
-        events=list(dataset.columns)[1:]
+        events=list(dataset.columns)
         
     if test_event_set is None:
         test_event_set=events[0:n_test_events]
@@ -162,6 +162,7 @@ def getDistMeasurer(dataset: pd.DataFrame,events=None, n_test_events=3, dist:Eve
 
 
 #child class of EventDistanceMeasurer that implements automatic saving/loading of computation heavy results in the 'checkpoints' directory
+#save file directory is determined by hash of dataset and the test events
 class EventDistanceMeasurerCP(EventDistanceMeasurer):
 
     def train_All_MHNs(self, measure_training_times = False, identifier="", **kwargs):
