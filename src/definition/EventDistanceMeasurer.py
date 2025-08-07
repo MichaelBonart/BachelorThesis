@@ -1,10 +1,11 @@
+import __init__
 from enum import Enum
 from typing import Dict
 import mhn
 import numpy as np
 import pandas as pd
-import cmhn_distances
 import checkpoints_mbonart as cp
+from definition import cmhn_distances
 import mhn_tools as mytools
 from pathlib import Path
 
@@ -175,7 +176,7 @@ class EventDistanceMeasurerCP(EventDistanceMeasurer):
 
         if not cp.is_dir_already_computed(dirname):
             super().train_All_MHNs(measure_training_times, **kwargs)
-            self.saveto(f"{cp.CHECKPOINT_DIR}/{dirname}")
+            self.saveto(cp.CHECKPOINT_DIR/dirname)
         else:
-            self.loadfrom(f"{cp.CHECKPOINT_DIR}/{dirname}")
+            self.loadfrom(cp.CHECKPOINT_DIR/dirname)
     

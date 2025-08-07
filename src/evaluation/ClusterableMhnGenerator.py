@@ -1,3 +1,4 @@
+import __init__
 import itertools
 from typing import Dict, List
 import mhn

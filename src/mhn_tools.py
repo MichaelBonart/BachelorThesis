@@ -59,5 +59,5 @@ def plotMHNgroup(mhns:List[mhn.model.cMHN],identifier="Group", singleFile=False)
     else:
         for m in mhns:
             m.plot(colorbar=False)
-            plt.savefig(f'result_plots/{identifier}_{'_'.join([event_id(ev) for ev in m.events])}')
+            plt.savefig(f"result_plots/{identifier}_{'_'.join([event_id(ev) for ev in m.events])}")
 
