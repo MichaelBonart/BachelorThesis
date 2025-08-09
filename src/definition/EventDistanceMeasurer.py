@@ -1,6 +1,6 @@
 import __init__
 from enum import Enum
-from typing import Dict
+from typing import Dict, List
 import mhn
 import numpy as np
 import pandas as pd
@@ -157,6 +157,44 @@ def getDistMeasurer(dataset: pd.DataFrame,events=None, n_test_events=3, dist:Eve
     return dist_measurer
 
 
+
+def combineDistMeasurers(dist_measurers:List[EventDistanceMeasurer], return_count_dist=False):
+    if len(dist_measurers)<3:
+        print("At least 3 distance measurers are required. Please include more distance measurers for a combination, whose domain includes all available events.")
+
+    sum_dist=dist_measurers[0]._dist_mat*0
+    count_dist=dist_measurers[0]._dist_mat*0
+
+    #combine all distance matrices to a single one (arithmetic mean)
+    #We need to take into account that event pairs might appear in different numbers of distance matrices (-> count_dist)
+    for dist_m in dist_measurers:
+
+        dist_mat=dist_m._dist_mat.copy()
+        test_event_set=dist_m._test_events
+
+        dist_mat.sort_index(axis=0, inplace=True)
+        dist_mat.sort_index(axis=1, inplace=True)
+        dist_mat.loc[:,test_event_set]=0
+        dist_mat.loc[test_event_set,:]=0
+
+        norm_c=len(test_event_set)      #normalization factor as discussed in section 2.6 of the thesis
+
+        norm_dist=dist_mat*(1/norm_c)
+        sum_dist+=norm_dist
+
+        count_inc=dist_mat*0+1
+        count_inc.loc[:,test_event_set]=0
+        count_inc.loc[test_event_set,:]=0
+        count_dist += count_inc
+        
+    np.fill_diagonal(count_dist.values, 1)
+
+    mean_dist=sum_dist/(count_dist)
+
+    if return_count_dist:
+        return mean_dist, count_dist
+    
+    return mean_dist
 
 
 
