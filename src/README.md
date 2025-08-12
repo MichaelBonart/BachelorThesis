@@ -9,5 +9,9 @@ This folder includes all implementations used in the bachelor thesis grouped by 
 
 
 Some more files that were generally useful across different directories:
-'mhn_tools.py': methods for plotting/copying/... MHNs
+'mhn_tools.py': useful methods for plotting/copying MHNs and more
 'checkpoints_mbonart.py': automatic saving/loading of previously computed results
+
+Additionally there are the following two subdirectories, which contain generated results:
+'mbonart_checkpoints/': results of MHN optimizations that can be loaded again in the future
+'result_plots': automaitcally generated plots (usually of MHNs of interest)

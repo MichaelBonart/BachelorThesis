@@ -1,6 +1,6 @@
-# ws25_mbonart_mhn-feature-clustering
+# An MHN-Based Distance Measure for Clustering Cancer Progression Events
 
-Bachelor thesis on feature clustering of MHN input data based on MHN-evaluated similarity of cancer progression events.
+This respository is attached to Michael Bonart's Bachelor's thesis on clustering cancer progression events based on MHN-evaluated similarity and interchangeability.
 
 
 All implementations can be found in the 'src/' folder.

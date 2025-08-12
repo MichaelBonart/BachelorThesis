@@ -1,6 +1,6 @@
 # APPLICATION
 
-The files in this directory outline the application of our distance measure on on cross-sectional data of
+In 'genie16_analysis.ipynb' we apply our distance measure on on cross-sectional data of
 patients suffering from selected kinds of cancer as described in chapter 4 of the bachelor thesis.
 
 We analyze selected datasets from the top-level 'data/'- directory.
