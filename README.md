@@ -5,6 +5,6 @@ The Bachelor's Thesis itself can be found in the 'docs/' directory.
 
 All implementations can be found in the 'src/' directory.
 All used datasets are located in the 'data' directory.
-The main plots of the thesis were extracted from jupyter notebooks and stored in 'docs/grafiken', additional plots (plots of MHN) can be found in 'src/result_plots'
+The main plots of the thesis were extracted from jupyter notebooks and stored in 'docs/grafiken', additional plots (plots of MHNs) can be found in 'src/result_plots'
 
 
